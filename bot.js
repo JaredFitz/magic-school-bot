@@ -51,4 +51,4 @@ client.on('message', message => {
 
 // !role 
 
-client.login(process.env.PRACTICE_BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
