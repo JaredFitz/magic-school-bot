@@ -31,16 +31,11 @@ client.on('message', message => {
         message.channel.send('You must pass in a name for the role');
       }
     } else if (command === 'message') {
-      const filter = (reaction, user) => {
-        return reaction.emoji.name === '✅' && user.id === message.author.id;
-      };
-
-      const collector = message.createReactionCollector(filter, { time: 15000 });
-      collector.on('collect', (creaction, user) => {
-        message.member.user.send('How can I help you?')
-      })
-      message.channel.send('React to this message to registure for the tournament')
-      message.react('✅').then(() => message.react('❌'))
+      message.channel.send('React to this message to register for the tournament')
+        .then((res) => {
+          res.react('✅')
+          res.react('❌')
+        })
     }
     // if (message.member) {
     //   message.member.user.send('How can I help you?')
