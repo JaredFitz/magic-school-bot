@@ -11,7 +11,7 @@ client.once('ready', () => {
 client.on('message', message => {
   try {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
-  
+    if (message.content.toLowerCase().includes('uwu') && !message.author.bot) message.channel.send('Woop Woop UWU!!')
   
     const args = message.content.slice(prefix.length).trim().split(' ');
     const command = args.shift().toLowerCase();
