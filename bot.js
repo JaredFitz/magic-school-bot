@@ -31,7 +31,7 @@ client.on('message', message => {
         message.channel.send('You must pass in a name for the role');
       }
     } else if (command === 'message') {
-      message.channel.send('React to this message to register for the tournament')
+      message.channel.send('React to this message to register for the tournament!')
         .then((res) => {
           res.react('✅')
           res.react('❌')
