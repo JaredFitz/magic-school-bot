@@ -1,14 +1,21 @@
 require('dotenv').config()
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const redis = require('redis');
+
+// clients
+const discordClient = new Discord.Client();
+const redisClient = redis.createClient(URL=process.env.REDIS_URL)
+redisClient.on('error', function(error) {
+  console.log('redis error: ', error);
+});
 
 const prefix = '!';
 
-client.once('ready', () => {
+discordClient.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.on('message', message => {
+discordClient.on('message', message => {
   try {
     if (message.content.toLowerCase().includes('uwu') && !message.author.bot) message.channel.send('Woop Woop UWU!!')
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -36,14 +43,44 @@ client.on('message', message => {
           res.react('✅')
           res.react('❌')
         })
+    } else if (command === 'add-key') {
+      if (args.length >= 2) {
+        redisClient.set(args[0], args[1], redis.print)
+        message.channel.send('Setting key')
+      } else {
+        message.channel.send('Please pass at least 2 args in')
+      }
+    } else if (command === 'get-key') {
+      if (args.length === 1) {
+        redisClient.get(args[0], (err, val) => {
+          if (err) console.log('get single key error: ', err);
+          
+          if (val) {
+            message.channel.send(`${args[0]}: ${val}`)
+          } else {
+            message.channel.send(`'${args[0]}' not found`)
+          }
+        })
+      } else {
+        message.channel.send('You must pass you key in')
+      }
+    } else if (command === 'get-all-keys') {
+      redisClient.keys('*', (err, keys) => {
+        if (err) console.log('get all keys error: ', err)
+        
+        const allKeys = [];
+
+        keys.forEach(k => allKeys.push(k))
+        
+        message.channel.send(allKeys.toString())
+      })
+    } else if (command === 'test-json') {
+      redisClient.set('testJSON', JSON.stringify({first: 1, second: '2nd', third: {fourth: ['a', 'b', 3]}}))
+    } else {
+      message.channel.send(`Unrecognized command '${command}'`)
     }
-    // if (message.member) {
-    //   message.member.user.send('How can I help you?')
-    // } else {
-    //   message.author.send(`I'm already here to help you, what's up?`)
-    // }
     
-    const botWasMentioned = message.mentions.users.some(user => user.id === client.user.id);
+    const botWasMentioned = message.mentions.users.some(user => user.id === discordClient.user.id);
     if (botWasMentioned) {
       message.react('😀')
     }
@@ -55,4 +92,4 @@ client.on('message', message => {
 
 // !role 
 
-client.login(process.env.BOT_TOKEN);
+discordClient.login(process.env.BOT_TOKEN);
