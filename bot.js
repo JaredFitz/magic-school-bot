@@ -19,8 +19,6 @@ discordClient.on('message', message => {
   }
 })
 
-discordClient.on('')
-
 // !role 
 
 discordClient.login(process.env.BOT_TOKEN);
