@@ -44,8 +44,16 @@ const handleMessage = (message, redisClient) => {
     case 'get-all-keys':
       getAllKeys(message);
       break;
+    case 'register':
+      register(message);
+      break;
     default:
-      message.channel.send(`Unrecognized command '${command}'`);
+      message.channel.send(`Unrecognized command: ${command}`).then(res => {
+        setTimeout(() => {
+          message.delete();
+          res.delete();
+        }, 3000);
+      });
   }
 }
 
@@ -64,7 +72,6 @@ const createRole = (message, args) => {
         message.channel.send(`Successfully created a role with id: ${role.id}`)
         message.member.roles.add(role)
       });
-
   } else {
     message.channel.send('You must pass in a name for the role');
   }
@@ -119,7 +126,7 @@ const getKey = (message, args) => {
 };
 
 /**
- * returns 
+ * Returns all keys
  * @param {Discord.Message} message
  * @param {string[]} args
  */
@@ -133,6 +140,14 @@ const getAllKeys = (message, args) => {
     
     message.channel.send(allKeys.join(', '));
   });
+};
+
+/**
+ * Kicks off registration messages 
+ * @param {Discord.Message} message
+ */
+const register = (message) => {
+  
 };
 
 module.exports = {
